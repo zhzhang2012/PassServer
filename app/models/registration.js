@@ -21,4 +21,8 @@ var RegistrationSchema = new Schema({
     deviceLibraryIdentifier: String
 });
 
+RegistrationSchema.statics.findAllPasses = function (deviceId, cb) {
+    this.find({deviceLibraryIdentifier: deviceId}).select('passTypeIdentifier serialNumber').exec(cb);
+}
+
 var Registration = mongoose.model('Registration', RegistrationSchema);

@@ -35,6 +35,14 @@ exports.create = function (req, res) {
 };
 
 /**
+ * Update a pass info and send a push notification to the devices.
+ */
+exports.update = function (req, res) {
+    //TODO update the pass info
+
+}
+
+/**
  * Find a pass by its pass type identifier and its serial number.
  */
 exports.findPass = function (req, res, next) {
@@ -51,8 +59,11 @@ exports.findPass = function (req, res, next) {
                     req.params.serialNumber + ") does not exist. (404)";
                 return next(new Error(msg));
             }
+            req.pass = _pass;
             next();
         });
 };
+
+
 
 

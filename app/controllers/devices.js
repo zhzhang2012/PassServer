@@ -32,6 +32,9 @@ exports.create = function (req, res) {
         });
 };
 
+/**
+ *  TODO remove device when there is no registration in the db
+ */
 exports.remove = function (req, res) {
 
 }

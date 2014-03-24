@@ -7,6 +7,7 @@
         "express": "3.x",
         "mongoose": "~3.8.3",
         "connect-mongo": "~0.4.0",
-        "apn": "*"
+        "apn": "*",
+        "underscore": "latest"
     }
 }

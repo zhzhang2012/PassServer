@@ -2,11 +2,13 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
+    _ = require('underscore'),
     passes = require('./passes'),
     devices = require('./devices'),
     Pass = mongoose.model('Pass'),
     Device = mongoose.model('Device'),
-    Registration = mongoose.model('Registration');
+    Registration = mongoose.model('Registration'),
+    apnService = require('../services/notification');
 
 /**
  * Register a new device to a pass.
@@ -60,9 +62,58 @@ exports.register = function (req, res) {
 };
 
 /**
- * Unregister a device from the pass library.
+ * Find an array of pushTokens to be sent notifications to.
+ * Send notifications to devices which have registered for the specific pass
  */
-exports.unRegister = function (req, res) {
+exports.pushUpdate = function (req, res) {
+    //TODO call the pass update method to update the pass info
+    Registration
+        .find({
+            passTypeIdentifier: req.params.passTypeIdentifier,
+            serialNumber: req.params.serialNumber
+        })
+        .exec(function (_err, _regs) {
+            if (_err) return res.json(500);
+            _.each(_regs, function (reg) {
+                Device.findByIdentifier(reg.deviceLibraryIdentifier, function (err, device) {
+                    if (err) return res.json(500);
+                    if (typeof device.pushToken == "undefined")
+                        return res.send(404, {error: "Requested device is not found: " + device.deviceLibraryIdentifier});
+                    else {
+                        apnService.push(device.pushToken);
+                        console.log("Successfully send the update notification.");
+                        return res.json(200);
+                    }
+                })
+            })
+        })
+};
+
+exports.getNewSerialNum = function (req, res) {
+//    Registration.findAllPasses(req.params.deviceLibraryIdentifier, function(_err, _regs){
+//        if(_err) return res.json(500);
+//        _.each(_regs, function(reg){
+//
+//        })
+//            passes.findPass(req, res, function(err){
+//                if(err) return res.json(err);
+//                if(typeof req.query.passesUpdatedSince == "undefined"){
+//
+//                } else {
+//
+//                }
+//            })
+//        })
+//        return res.json(_passes);
+//    })
+
+
+};
+
+/**
+ * Withdraw a device from the pass library.
+ */
+exports.withdraw = function (req, res) {
     var msg = null;
     console.log("Requesting un-registration from the pass library...");
     console.log("Info: Device<" + req.params.deviceLibraryIdentifier + "> PassType<" + req.params.passTypeIdentifier
@@ -91,4 +142,4 @@ exports.unRegister = function (req, res) {
                 return res.json(reg);
             })
         })
-}
+};

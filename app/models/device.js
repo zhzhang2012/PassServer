@@ -20,4 +20,8 @@ var DeviceSchema = new Schema({
     pushToken: String
 });
 
+DeviceSchema.statics.findByIdentifier = function (id, cb) {
+    this.findOne({deviceLibraryIdentifier: id}, cb);
+}
+
 var Device = mongoose.model('Device', DeviceSchema);

@@ -33,10 +33,6 @@ var walk = function (path) {
 };
 walk(models_path);
 
-var apn = require('apn');
-var options = {"gateway": "gateway.push.apple.com"};
-var apnConnection = new apn.Connection(options);
-
 var app = express();
 
 app.use(express.bodyParser());
